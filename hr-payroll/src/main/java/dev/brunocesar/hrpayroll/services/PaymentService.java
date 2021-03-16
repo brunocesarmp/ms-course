@@ -1,33 +1,22 @@
 package dev.brunocesar.hrpayroll.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import dev.brunocesar.hrpayroll.entities.Payment;
 import dev.brunocesar.hrpayroll.entities.Worker;
+import dev.brunocesar.hrpayroll.feignclients.WorkerFeignClient;
 
 @Service
 public class PaymentService {
 
-	@Value("${hr-worker.host}")
-	private String workerHost;
+	private final WorkerFeignClient workerFeignClient;
 
-	private final RestTemplate restTemplate;
-
-	public PaymentService(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
+	public PaymentService(WorkerFeignClient workerFeignClient) {
+		this.workerFeignClient = workerFeignClient;
 	}
 
 	public Payment getPayment(long workerId, int days) {
-
-		Map<String, String> uriVariables = new HashMap<>();
-		uriVariables.put("id", "" + workerId);
-
-		Worker worker = restTemplate.getForObject(workerHost + "/workers/{id}", Worker.class, uriVariables);
+		Worker worker = workerFeignClient.findById(workerId).getBody();
 		return new Payment(worker.getName(), worker.getDailyIncome(), days);
 	}
 
