@@ -20,9 +20,9 @@ import dev.brunocesar.hrworker.repositores.WorkerRepository;
 @RefreshScope
 @RestController
 @RequestMapping(value = "/workers")
-public class WorkerResources {
+public class WorkerResource {
 
-	private static Logger logger = LoggerFactory.getLogger(WorkerResources.class);
+	private static Logger logger = LoggerFactory.getLogger(WorkerResource.class);
 
 	@Value("${test.config}")
 	private String testConfig;
@@ -32,7 +32,7 @@ public class WorkerResources {
 
 	private final WorkerRepository repository;
 
-	public WorkerResources(WorkerRepository repository) {
+	public WorkerResource(WorkerRepository repository) {
 		this.repository = repository;
 	}
 
