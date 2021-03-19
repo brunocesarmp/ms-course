@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -24,22 +22,12 @@ public class WorkerResource {
 
 	private static Logger logger = LoggerFactory.getLogger(WorkerResource.class);
 
-	@Value("${test.config}")
-	private String testConfig;
-	
-	@Autowired
-	private Environment env;
-
 	private final WorkerRepository repository;
+	private final Environment environment;
 
-	public WorkerResource(WorkerRepository repository) {
+	public WorkerResource(WorkerRepository repository, Environment environment) {
 		this.repository = repository;
-	}
-
-	@GetMapping(value = "/configs")
-	public ResponseEntity<Void> getConfigs() {
-		logger.info("CONFIG = " + testConfig);
-		return ResponseEntity.noContent().build();
+		this.environment = environment;
 	}
 
 	@GetMapping
@@ -50,9 +38,9 @@ public class WorkerResource {
 
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Worker> findById(@PathVariable("id") Long id) {
-		logger.info("PORT = " + env.getProperty("local.server.port"));
+		logger.info("PORT = " + environment.getProperty("local.server.port"));
 		var worker = repository.findById(id).get();
 		return ResponseEntity.ok(worker);
 	}
-
+	
 }
